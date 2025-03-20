@@ -92,10 +92,10 @@ public class SearchActivity extends AppCompatActivity {
                 ArrayList<String> areaCodes = new ArrayList<>();
                 ArrayList<String> areaNames = new ArrayList<>();
 
-                for (JsonNode node : areas.get("variables").get(1).get("values")) {
+                for (JsonNode node : areas.get("variables").get(0).get("values")) {
                     areaCodes.add(node.asText());
                 }
-                for (JsonNode node : areas.get("variables").get(1).get("valueTexts")) {
+                for (JsonNode node : areas.get("variables").get(0).get("valueTexts")) {
                     areaNames.add(node.asText());
                 }
 
@@ -195,8 +195,8 @@ public class SearchActivity extends AppCompatActivity {
 
                 JsonNode vehicleData = objectMapper.readTree(response.toString());
 
-                JsonNode vehicleTypes = vehicleData.get("dataset").get("dimension").get("Ajoneuvoluokka").get("category").get("label");
-                JsonNode vehicleCounts = vehicleData.get("dataset").get("value");
+                JsonNode vehicleTypes = vehicleData.get("dimension").get("Ajoneuvoluokka").get("category").get("label");
+                JsonNode vehicleCounts = vehicleData.get("value");
 
                 int totalVehicles = 0;
                 ArrayList<String> typeNames = new ArrayList<>();

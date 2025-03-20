@@ -1,5 +1,14 @@
-{"queryObj":{
+{
   "query": [
+    {
+      "code": "Alue",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "KU049"
+        ]
+      }
+    },
     {
       "code": "Ajoneuvoluokka",
       "selection": {
@@ -27,7 +36,7 @@
       "selection": {
         "filter": "item",
         "values": [
-          "2024"
+          "2022"
         ]
       }
     }
@@ -35,4 +44,4 @@
   "response": {
     "format": "json-stat2"
   }
-},"tableIdForQuery":"statfin_mkan_pxt_11ic.px"}
+}
