@@ -3,6 +3,7 @@ package com.example.viikko10;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -92,18 +93,22 @@ public class SearchActivity extends AppCompatActivity {
                 ArrayList<String> areaNames = new ArrayList<>();
 
                 for (JsonNode node : areas.get("variables").get(1).get("values")) {
-                    areaNames.add(node.asText());
+                    areaCodes.add(node.asText());
                 }
                 for (JsonNode node : areas.get("variables").get(1).get("valueTexts")) {
-                    areaCodes.add(node.asText());
+                    areaNames.add(node.asText());
                 }
 
                 HashMap<String, String> cityCodes = new HashMap<>();
                 for (int i = 0; i < areaCodes.size(); i++) {
-                    cityCodes.put(areaCodes.get(i), areaNames.get(i));
+                    cityCodes.put(areaNames.get(i), areaCodes.get(i));
                 }
 
                 String code = cityCodes.get(city);
+
+                for (String cityName : cityCodes.keySet()) {
+                    Log.d("LUT", cityName);
+                }
 
                 if (code == null) {
                     runOnUiThread(() -> statusText.setText("Haku epäonnistui, kaupunkia ei löydy"));
@@ -116,6 +121,14 @@ public class SearchActivity extends AppCompatActivity {
                 con.setRequestProperty("Content-Type", "application/json; utf-8");
                 con.setRequestProperty("Accept", "application/json");
                 con.setDoOutput(true);
+
+                JsonNode jsonInputString = objectMapper.readTree(context.getResources().openRawResource(R.raw.query));
+
+                ((ObjectNode) jsonInputString.get("query").get(0).get("selection")).putArray("values").add(code);
+
+                byte[] input = objectMapper.writeValueAsBytes(jsonInputString);
+                OutputStream os = con.getOutputStream();
+                os.write(input, 0, input.length);
 
                 ObjectNode queryObj = objectMapper.createObjectNode();
                 ArrayNode queryArray = objectMapper.createArrayNode();
@@ -170,8 +183,6 @@ public class SearchActivity extends AppCompatActivity {
                 fullRequest.set("queryObj", queryObj);
                 fullRequest.put("tableIdForQuery", "statfin_mkan_pxt_11ic.px");
 
-                OutputStream os = con.getOutputStream();
-                os.write(objectMapper.writeValueAsBytes(fullRequest));
                 os.close();
 
                 BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
